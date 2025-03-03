@@ -13,43 +13,36 @@ class RegisterController extends Controller
 {
     public function register(Request $request)
     {
-        // Validation rules
+        // ✅ Validation rules
         $validator = Validator::make($request->all(), [
-            'business_name' => 'required|string|max:255',
+            'name' => 'required|string|max:255',
+            'username' => 'required|string|max:255|unique:users,username',
             'email' => 'required|email|unique:users,email',
-            'phone' => 'required|numeric|digits:10|unique:users,phone',
-            'password' => [
-                'required',
-                'string',
-                'min:8',
-                'regex:/[A-Z]/',     // At least 1 uppercase letter
-                'regex:/[a-z]/',     // At least 1 lowercase letter
-                'regex:/[0-9]/',     // At least 1 digit
-                'regex:/[@$!%*#?&]/', // At least 1 special character
-                'confirmed'          // Must match password_confirmation
-            ],
-            'terms' => 'accepted'
+            'password' => 'required|min:8|confirmed',
+            'school_college_name' => 'nullable|string|max:255',
+            'city' => 'nullable|string|max:100',
+            'mobile_number' => 'required|digits:10|unique:users,mobile_number',
+            'full_address' => 'nullable|string|max:500',
         ]);
 
         if ($validator->fails()) {
             return response()->json(['message' => $validator->errors()->first()], 422);
         }
 
-        // ✅ Create the user
+        // ✅ Create User (Only "User" role allowed)
         $user = User::create([
-            'business_name' => $request->business_name,
+            'name' => $request->name,
+            'username' => $request->username,
             'email' => $request->email,
-            'phone' => $request->phone,
             'password' => Hash::make($request->password),
+            'school_college_name' => $request->school_college_name,
+            'city' => $request->city,
+            'mobile_number' => $request->mobile_number,
+            'full_address' => $request->full_address,
+            'role' => 'user', // ✅ USER ROLE FIXED
         ]);
 
-        // ✅ Generate API Token
-        $token = $user->createToken('auth_token')->plainTextToken;
-
-        return response()->json([
-            'message' => 'User registered successfully!',
-            'token' => $token,
-            'user' => $user
-        ], 201);
+        return response()->json(['message' => 'User registered successfully!', 'user' => $user], 201);
     }
+
 }

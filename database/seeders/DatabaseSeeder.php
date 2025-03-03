@@ -8,14 +8,17 @@ use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
-
-    public function run(): void
+    public function run()
     {
-        User::factory()->create([
-            'business_name' => 'Test Business',
-            'email' => 'hiteshpandey732195@gmail.com',
-            'phone' => '1234567890',
-            'password' => Hash::make('Password@123'),
-        ]);
+        User::firstOrCreate(
+            ['email' => 'hiteshpandey732195@gmail.com'], // ✅ Agar already hai toh dubara na ho
+            [
+                'name' => 'Admin',
+                'username' => 'admin',
+                'password' => Hash::make('Admin@123'),
+                'role' => 'admin',
+                'mobile_number' => '9999999999',
+            ]
+        );
     }
 }
