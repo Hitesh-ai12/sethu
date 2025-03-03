@@ -21,22 +21,21 @@ class RegisterController extends Controller
             'password' => [
                 'required',
                 'string',
-                'min:8',              // Minimum 8 characters
-                'regex:/[A-Z]/',      // At least one uppercase letter
-                'regex:/[a-z]/',      // At least one lowercase letter
-                'regex:/[0-9]/',      // At least one digit
-                'regex:/[@$!%*#?&]/', // At least one special character
-                'confirmed'           // Password confirmation
+                'min:8',
+                'regex:/[A-Z]/',     // At least 1 uppercase letter
+                'regex:/[a-z]/',     // At least 1 lowercase letter
+                'regex:/[0-9]/',     // At least 1 digit
+                'regex:/[@$!%*#?&]/', // At least 1 special character
+                'confirmed'          // Must match password_confirmation
             ],
             'terms' => 'accepted'
         ]);
 
-        // If validation fails
         if ($validator->fails()) {
             return response()->json(['message' => $validator->errors()->first()], 422);
         }
 
-        // Create user
+        // ✅ Create the user
         $user = User::create([
             'business_name' => $request->business_name,
             'email' => $request->email,
@@ -44,6 +43,13 @@ class RegisterController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        return response()->json(['message' => 'User registered successfully!'], 201);
+        // ✅ Generate API Token
+        $token = $user->createToken('auth_token')->plainTextToken;
+
+        return response()->json([
+            'message' => 'User registered successfully!',
+            'token' => $token,
+            'user' => $user
+        ], 201);
     }
 }

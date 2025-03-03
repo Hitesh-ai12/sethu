@@ -20,14 +20,18 @@
 
             <!-- ✅ Two-Factor Code -->
             <div>
-                <label class="block text-sm font-medium">Two-Factor Authentication</label>
+                <label class="block text-sm font-medium">Enter OTP Code</label>
                 <input type="text" name="two_factor_code" placeholder="Enter authentication code"
                     class="w-full p-2 border rounded focus:ring-2 focus:ring-orange-400 focus:outline-none" required>
+
+                @if ($errors->has('two_factor_code'))
+                    <p class="text-red-500 text-sm">{{ $errors->first('two_factor_code') }}</p>
+                @endif
             </div>
 
             <!-- ✅ Submit Button -->
             <button type="submit" class="w-full py-2 text-white bg-orange-500 rounded hover:bg-orange-600">
-                Login
+                Verify & Login
             </button>
         </form>
     </div>

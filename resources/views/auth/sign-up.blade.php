@@ -10,6 +10,9 @@
 </head>
 <body class="flex items-center justify-center min-h-screen bg-gray-100">
     <div class="w-full max-w-md p-8 space-y-6 bg-white shadow-md rounded-lg">
+        <div class="flex justify-center">
+            <img src="{{ asset('storage/sethu.png') }}" alt="Logo" class="h-16">
+        </div>
         <h2 class="text-2xl font-bold text-center">Create an account</h2>
         <p class="text-sm text-center text-gray-600">Lorem ipsum dolor sit amet consectetur.</p>
 
@@ -56,6 +59,13 @@
                 Sign Up
             </button>
         </form>
+
+        <div class="flex items-center justify-center">
+            <span class="text-sm text-gray-500">Or</span>
+        </div>
+
+        <button class="w-full p-2 border rounded hover:bg-gray-200">Sign in with Google</button>
+        <button class="w-full p-2 border rounded hover:bg-gray-200">Sign in with Apple</button>
 
         <p class="text-center text-sm">
             Already have an account?
