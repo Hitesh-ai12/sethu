@@ -15,7 +15,6 @@ Route::post('/reset-password', [ForgotPasswordController::class, 'resetPassword'
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::put('/change-city', [RegisterController::class, 'changeCity']);
-
-    Route::post('/personalize-skills', [RegisterController::class, 'personalizeSkills']);
+    Route::PUT('/personalize-skills', [RegisterController::class, 'personalizeSkills']);
 });
 

@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Mail;
 use App\Models\UserSkill;
 use Carbon\Carbon;
-
+use Illuminate\Support\Facades\Log; // Import this
 
 class RegisterController extends Controller
 {
@@ -61,53 +61,60 @@ class RegisterController extends Controller
     }
 
 
-
-
-    // Change City API
     public function changeCity(Request $request)
     {
-        $request->validate([
-            'city' => 'required|string|max:255',
+
+        $validator = Validator::make($request->all(), [
+            'city' => 'required|string|max:255'
         ]);
 
-        $user = auth()->user();
+        if ($validator->fails()) {
+            return response()->json(['message' => $validator->errors()->first()], 422);
+        }
 
+        $user = auth()->user();
         if (!$user) {
-            return response()->json(['message' => 'Unauthorized'], 401);
+            return response()->json(['message' => 'Unauthorized or session expired'], 401);
         }
 
         $user->city = $request->city;
         $user->save();
 
-        return response()->json([
-            'message' => 'City updated successfully',
-            'user' => $user
-        ], 200);
+        return response()->json(['message' => 'City updated successfully'], 200);
     }
 
-
-
-    // Personalize Skills API
     public function personalizeSkills(Request $request)
     {
-        $request->validate([
-            'skills' => 'required|array',
-            'skills.*' => 'string|max:255',
-        ]);
+        try {
+            \Log::info('Request Data:', $request->all()); // Debugging ke liye log
 
-        $user = auth()->user();
+            $validator = Validator::make($request->all(), [
+                'skills' => 'required|array',
+                'skills.*' => 'string|max:255'
+            ]);
 
-        // Delete old skills to avoid duplication
-        $user->skills()->delete();
+            if ($validator->fails()) {
+                return response()->json(['message' => $validator->errors()->first()], 422);
+            }
 
-        // Insert new skills
-        $skillsData = [];
-        foreach ($request->skills as $skill) {
-            $skillsData[] = ['user_id' => $user->id, 'skill_name' => $skill, 'created_at' => now(), 'updated_at' => now()];
+            $user = auth()->user();
+            if (!$user) {
+                return response()->json(['message' => 'Unauthorized or session expired'], 401);
+            }
+
+            // Delete old skills and insert new ones as a single row
+            UserSkill::updateOrCreate(
+                ['user_id' => $user->id],
+                ['skill_name' => implode(',', $request->skills)] // Store as comma-separated string
+            );
+
+            return response()->json(['message' => 'Skills updated successfully'], 200);
+        } catch (\Exception $e) {
+            \Log::error('Error in personalizeSkills: ' . $e->getMessage());
+            return response()->json(['message' => 'Something went wrong', 'error' => $e->getMessage()], 500);
         }
-
-        UserSkill::insert($skillsData);
-
-        return response()->json(['message' => 'Skills updated successfully!'], 200);
     }
+
+
+
 }

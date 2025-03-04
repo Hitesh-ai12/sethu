@@ -11,13 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
+        Schema::dropIfExists('user_skills'); // First, drop the old table
+
         Schema::create('user_skills', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->string('skill_name');
+            $table->text('skill_name'); // Changed to text to store comma-separated values
             $table->timestamps();
         });
-
     }
 
     /**
@@ -25,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('user_skills');
+        Schema::dropIfExists('user_skills'); // Rollback will also drop the table
     }
 };

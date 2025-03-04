@@ -72,7 +72,6 @@ class LoginController extends Controller
             return response()->json(['message' => $validator->errors()->first()], 422);
         }
 
-        // ✅ Identify whether input is email or phone number
         $loginField = filter_var($request->email_or_phone, FILTER_VALIDATE_EMAIL) ? 'email' : 'mobile_number';
         $user = User::where($loginField, strtolower($request->email_or_phone))->first();
 
