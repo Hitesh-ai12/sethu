@@ -2,107 +2,118 @@
 
 namespace App\Http\Controllers\Auth;
 
-use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Hash;
+use Twilio\Rest\Client;
 
 class ForgotPasswordController extends Controller
 {
-    public function sendResetLink(Request $request)
+    public function sendResetOTP(Request $request)
     {
-        $request->validate(['email_or_phone' => 'required']);
+        $validator = Validator::make($request->all(), [
+            'email_or_phone' => 'required'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['message' => $validator->errors()->first()], 422);
+        }
 
         $user = User::where('email', $request->email_or_phone)
-                    ->orWhere('phone', $request->email_or_phone)
+                    ->orWhere('mobile_number', $request->email_or_phone)
                     ->first();
 
         if (!$user) {
             return response()->json(['message' => 'User not found'], 404);
         }
 
-        $otp = rand(100000, 999999);
-        $user->update(['otp' => $otp, 'otp_expires_at' => now()->addMinutes(10)]);
+        $otp = mt_rand(1000, 9999);
+        $user->otp = $otp;
+        $user->otp_expires_at = now()->addMinutes(5);
+        $user->save();
 
         if (filter_var($request->email_or_phone, FILTER_VALIDATE_EMAIL)) {
-            Mail::raw("Your OTP for password reset is: $otp", function ($message) use ($user) {
-                $message->to($user->email)->subject('Password Reset OTP');
+            Mail::raw("Your OTP is: $otp", function ($message) use ($user) {
+                $message->to($user->email)
+                        ->subject('Your Password Reset OTP');
             });
+            return response()->json(['message' => 'OTP sent to your email'], 200);
         } else {
-        }
+            $twilio = new Client(env('TWILIO_SID'), env('TWILIO_AUTH_TOKEN'));
 
-        return response()->json(['message' => 'OTP sent']);
+            try {
+                $twilio->messages->create(
+                    $user->mobile_number,
+                    [
+                        "from" => env('TWILIO_PHONE_NUMBER'),
+                        "body" => "Your OTP is: $otp"
+                    ]
+                );
+
+                return response()->json(['message' => 'OTP sent to your phone'], 200);
+            } catch (\Exception $e) {
+                return response()->json(['message' => 'Failed to send OTP', 'error' => $e->getMessage()], 500);
+            }
+        }
     }
 
-    public function verifyOtp(Request $request)
+    public function verifyOTP(Request $request)
     {
-        $request->validate(['email_or_phone' => 'required', 'otp' => 'required|digits:6']);
+        $validator = Validator::make($request->all(), [
+            'email_or_phone' => 'required',
+            'otp' => 'required|digits:4'
+        ]);
 
-        $user = User::where('email', $request->email_or_phone)
-                    ->orWhere('phone', $request->email_or_phone)
+        if ($validator->fails()) {
+            return response()->json(['message' => $validator->errors()->first()], 422);
+        }
+
+        $user = User::where(function ($query) use ($request) {
+                        $query->where('email', $request->email_or_phone)
+                              ->orWhere('mobile_number', $request->email_or_phone);
+                    })
                     ->where('otp', $request->otp)
-                    ->where('otp_expires_at', '>', now())
                     ->first();
 
-        if (!$user) {
-            return response()->json(['message' => 'Invalid OTP or expired'], 400);
+        if (!$user || Carbon::now()->gt($user->otp_expires_at)) {
+            return response()->json(['message' => 'Invalid or expired OTP'], 400);
         }
 
-        return response()->json(['message' => 'OTP verified successfully']);
-    }
+        $user->otp = null;
+        $user->otp_expires_at = null;
+        $user->save();
 
+        $token = $user->createToken('PasswordResetToken')->plainTextToken;
+
+        return response()->json([
+            'message' => 'OTP verified successfully',
+            'token' => $token
+        ], 200);
+    }
 
     public function resetPassword(Request $request)
     {
-        $request->validate([
-            'email_or_phone' => 'required',
-            'otp' => 'required|digits:6',
-            'password' => 'required|min:6|confirmed',
+        $validator = Validator::make($request->all(), [
+            'password' => 'required|string|min:8|confirmed'
         ]);
 
-        $user = User::where('email', $request->email_or_phone)
-                    ->orWhere('phone', $request->email_or_phone)
-                    ->where('otp', $request->otp)
-                    ->where('otp_expires_at', '>', now())
-                    ->first();
-
-        if (!$user) {
-            return response()->json(['message' => 'Invalid OTP or expired'], 400);
+        if ($validator->fails()) {
+            return response()->json(['message' => $validator->errors()->first()], 422);
         }
 
-        $user->update([
-            'password' => Hash::make($request->password),
-            'otp' => null,
-            'otp_expires_at' => null
-        ]);
-
-        return response()->json(['message' => 'Password reset successfully']);
-    }
-
-    public function sendResetOTP(Request $request)
-    {
-        $request->validate([
-            'email' => 'required_without:phone|email|exists:users,email',
-            'phone' => 'required_without:email|digits:10|exists:users,phone',
-        ]);
-
-        $user = User::where('email', $request->email)
-                    ->orWhere('phone', $request->phone)
-                    ->first();
+        $user = auth()->user();
 
         if (!$user) {
-            return response()->json(['message' => 'User not found'], 404);
+            return response()->json(['message' => 'Unauthorized or session expired'], 401);
         }
 
-        $otp = rand(100000, 999999);
-        $user->otp = $otp;
-        $user->otp_expires_at = now()->addMinutes(10);
+        $user->password = Hash::make($request->password);
         $user->save();
 
-        return response()->json(['message' => 'OTP sent successfully', 'otp' => $otp]);
+        return response()->json(['message' => 'Password reset successfully'], 200);
     }
 }

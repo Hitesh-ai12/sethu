@@ -31,10 +31,8 @@ class RegisterController extends Controller
             return response()->json(['message' => $validator->errors()->first()], 422);
         }
 
-        // ✅ Securely Hash Password
         $hashedPassword = Hash::make($request->password);
 
-        // ✅ Create User
         $user = User::create([
             'name' => $request->name,
             'username' => $request->username,
@@ -64,73 +62,6 @@ class RegisterController extends Controller
 
 
 
-    // Forgot Password API (Send OTP)
-    public function sendResetOTP(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'email' => 'required|email|exists:users,email'
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json(['message' => $validator->errors()->first()], 422);
-        }
-
-        $otp = mt_rand(1000, 9999);
-        $user = User::where('email', $request->email)->first();
-        $user->otp = $otp;
-        $user->otp_expires_at = Carbon::now()->addSeconds(45);
-        $user->save();
-
-        return response()->json(['message' => 'OTP sent successfully'], 200);
-    }
-
-    // OTP Verification API
-    public function verifyOTP(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'email' => 'required|email',
-            'otp' => 'required|digits:4'
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json(['message' => $validator->errors()->first()], 422);
-        }
-
-        $user = User::where('email', $request->email)->where('otp', $request->otp)->first();
-
-        if (!$user || Carbon::now()->gt($user->otp_expires_at)) {
-            return response()->json(['message' => 'Invalid or expired OTP'], 400);
-        }
-
-        return response()->json(['message' => 'OTP verified successfully'], 200);
-    }
-
-    // Reset Password API
-    public function resetPassword(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'email' => 'required|email',
-            'otp' => 'required|digits:4',
-            'password' => 'required|string|min:8|confirmed'
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json(['message' => $validator->errors()->first()], 422);
-        }
-
-        $user = User::where('email', $request->email)->where('otp', $request->otp)->first();
-
-        if (!$user || Carbon::now()->gt($user->otp_expires_at)) {
-            return response()->json(['message' => 'Invalid or expired OTP'], 400);
-        }
-
-        $user->password = Hash::make($request->password);
-        $user->otp = null;
-        $user->otp_expires_at = null;
-        $user->save();
-
-        return response()->json(['message' => 'Password reset successfully'], 200);
-    }
 
     // Change City API
     public function changeCity(Request $request)
