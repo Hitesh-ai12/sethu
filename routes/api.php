@@ -17,6 +17,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/change-city', [RegisterController::class, 'changeCity']);
     Route::put('/personalize-skills', [RegisterController::class, 'personalizeSkills']);
     Route::post('/logout', [LoginController::class, 'logoutapi']);
+    Route::get('/profile', [RegisterController::class, 'getProfile']);
 
 });
 

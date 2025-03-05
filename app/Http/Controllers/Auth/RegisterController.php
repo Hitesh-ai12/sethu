@@ -121,9 +121,8 @@ class RegisterController extends Controller
 
     public function updateProfile(Request $request)
     {
-        \Log::info('Profile Update Route Hit', ['data' => $request->all()]); // ✅ Debugging ke liye log karo
 
-        // ✅ Validate incoming request
+
         $validator = Validator::make($request->all(), [
             'name' => 'nullable|string|max:255',
             'nickname' => 'nullable|string|max:255',
@@ -141,7 +140,6 @@ class RegisterController extends Controller
             return response()->json(['message' => 'Unauthorized or session expired'], 401);
         }
 
-        // ✅ **Manually Update Only Provided Fields**
         $updateFields = [];
 
         if ($request->has('name')) {
@@ -157,19 +155,18 @@ class RegisterController extends Controller
             $updateFields['dob'] = $request->dob;
         }
 
-        // ✅ Profile Image Upload
+
         if ($request->hasFile('profile_image')) {
-            // Pehle purani image delete kar do
+
             if ($user->profile_image) {
                 Storage::disk('public')->delete($user->profile_image);
             }
 
-            // Nayi image save karo
+
             $imagePath = $request->file('profile_image')->store('profile_images', 'public');
             $updateFields['profile_image'] = $imagePath;
         }
 
-        // ✅ Database me update karo
         if (!empty($updateFields)) {
             $user->update($updateFields);
         }
@@ -183,6 +180,32 @@ class RegisterController extends Controller
                 'gender' => $user->gender,
                 'dob' => $user->dob,
                 'profile_image' => $user->profile_image ? asset('storage/' . $user->profile_image) : null,
+            ]
+        ], 200);
+    }
+
+    public function getProfile(Request $request)
+    {
+        $user = auth()->user();
+        if (!$user) {
+            return response()->json(['message' => 'Unauthorized or session expired'], 401);
+        }
+
+        return response()->json([
+            'message' => 'Profile fetched successfully',
+            'user' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'nickname' => $user->nickname,
+                'gender' => $user->gender,
+                'dob' => $user->dob,
+                'profile_image' => $user->profile_image ? asset('storage/' . $user->profile_image) : null,
+                'email' => $user->email,
+                'mobile_number' => $user->mobile_number,
+                'school_college_name' => $user->school_college_name,
+                'city' => $user->city,
+                'full_address' => $user->full_address,
+                'role' => $user->role,
             ]
         ], 200);
     }
