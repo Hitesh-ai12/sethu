@@ -15,7 +15,7 @@ class DatabaseSeeder extends Seeder
             [
                 'name' => 'Admin',
                 'username' => 'admin',
-                'password' => Hash::make('Admin@123'),
+                'password' => Hash::make('Admin@123'), // Ensure password is hashed
                 'role' => 'admin',
                 'mobile_number' => '9999999999',
             ]

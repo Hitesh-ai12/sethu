@@ -14,8 +14,7 @@ class User extends Authenticatable
 
     protected $fillable = [
         'name', 'username', 'email', 'password', 'school_college_name',
-        'city', 'mobile_number', 'full_address', 'role', 'otp_expires_at',
-        'nickname', 'gender', 'dob', 'profile_image'
+        'city', 'mobile_number', 'full_address', 'role', 'otp_expires_at'
     ];
 
     protected $hidden = [
@@ -25,18 +24,21 @@ class User extends Authenticatable
 
     protected $casts = [
         'email_verified_at' => 'datetime',
-        'otp_expires_at' => 'datetime',
-        'dob' => 'date',
+        'otp_expires_at' => 'datetime', // ✅ Correct way to cast dates
     ];
 
-
+    // ✅ Automatically hash password before saving to DB
     public function setPasswordAttribute($value)
     {
-        if (!empty($value) && Hash::needsRehash($value)) {
+        // Check if password is already hashed
+        if (!Hash::needsRehash($value)) {
+            $this->attributes['password'] = $value;
+        } else {
             $this->attributes['password'] = bcrypt($value);
         }
     }
 
+    // ✅ Relationship: A user can have multiple skills
     public function skills()
     {
         return $this->hasMany(UserSkill::class);
