@@ -121,6 +121,9 @@ class RegisterController extends Controller
 
     public function updateProfile(Request $request)
     {
+        \Log::info('Profile Update Route Hit', ['data' => $request->all()]); // ✅ Debugging ke liye log karo
+
+        // ✅ Validate incoming request
         $validator = Validator::make($request->all(), [
             'name' => 'nullable|string|max:255',
             'nickname' => 'nullable|string|max:255',
@@ -138,6 +141,22 @@ class RegisterController extends Controller
             return response()->json(['message' => 'Unauthorized or session expired'], 401);
         }
 
+        // ✅ **Manually Update Only Provided Fields**
+        $updateFields = [];
+
+        if ($request->has('name')) {
+            $updateFields['name'] = $request->name;
+        }
+        if ($request->has('nickname')) {
+            $updateFields['nickname'] = $request->nickname;
+        }
+        if ($request->has('gender')) {
+            $updateFields['gender'] = $request->gender;
+        }
+        if ($request->has('dob')) {
+            $updateFields['dob'] = $request->dob;
+        }
+
         // ✅ Profile Image Upload
         if ($request->hasFile('profile_image')) {
             // Pehle purani image delete kar do
@@ -147,15 +166,13 @@ class RegisterController extends Controller
 
             // Nayi image save karo
             $imagePath = $request->file('profile_image')->store('profile_images', 'public');
-            $user->profile_image = $imagePath;
+            $updateFields['profile_image'] = $imagePath;
         }
 
-        // ✅ Update Other Fields
-        $user->name = $request->name ?? $user->name;
-        $user->nickname = $request->nickname ?? $user->nickname;
-        $user->gender = $request->gender ?? $user->gender;
-        $user->dob = $request->dob ?? $user->dob;
-        $user->save();
+        // ✅ Database me update karo
+        if (!empty($updateFields)) {
+            $user->update($updateFields);
+        }
 
         return response()->json([
             'message' => 'Profile updated successfully',
@@ -169,4 +186,5 @@ class RegisterController extends Controller
             ]
         ], 200);
     }
+
 }
