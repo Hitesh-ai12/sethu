@@ -40,14 +40,13 @@ class LoginController extends Controller
 
         $credentials = filter_var($request->email, FILTER_VALIDATE_EMAIL)
             ? ['email' => $request->email, 'password' => $request->password]
-            : ['mobile_number' => $request->email, 'password' => $request->password]; // ✅ "phone" ki jagah "mobile_number"
+            : ['mobile_number' => $request->email, 'password' => $request->password];
 
         if (Auth::attempt($credentials)) {
             $user = Auth::user();
 
-            // ❌ Sirf admin login kar sake
             if ($user->role !== 'admin') {
-                Auth::logout(); // ✅ Non-admin user ko logout karo
+                Auth::logout();
                 return response()->json(['message' => 'Only admins can log in'], 403);
             }
 
@@ -59,6 +58,7 @@ class LoginController extends Controller
 
         return response()->json(['message' => 'Invalid credentials'], 401);
     }
+
 
 
     public function apilogin(Request $request)
@@ -96,5 +96,18 @@ class LoginController extends Controller
         ], 200);
     }
 
+    public function logoutapi(Request $request)
+    {
+        $user = $request->user();
 
+        // Revoke the user's token
+        $user->tokens->each(function ($token) {
+            $token->delete();
+        });
+
+        // Alternatively, if you only want to delete the current token
+        // $request->user()->currentAccessToken()->delete();
+
+        return response()->json(['message' => 'Logged out successfully'], 200);
+    }
 }

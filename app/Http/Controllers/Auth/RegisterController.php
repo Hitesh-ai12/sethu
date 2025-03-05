@@ -10,7 +10,8 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Mail;
 use App\Models\UserSkill;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Log; // Import this
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class RegisterController extends Controller
 {
@@ -45,8 +46,12 @@ class RegisterController extends Controller
             'role' => 'user',
         ]);
 
+        // Create token for the registered user
+        $token = $user->createToken('auth_token')->plainTextToken;
+
         return response()->json([
             'message' => 'User registered successfully!',
+            'token' => $token,
             'user' => [
                 'id' => $user->id,
                 'name' => $user->name,
@@ -86,7 +91,6 @@ class RegisterController extends Controller
     public function personalizeSkills(Request $request)
     {
         try {
-            \Log::info('Request Data:', $request->all()); // Debugging ke liye log
 
             $validator = Validator::make($request->all(), [
                 'skills' => 'required|array',
@@ -102,10 +106,9 @@ class RegisterController extends Controller
                 return response()->json(['message' => 'Unauthorized or session expired'], 401);
             }
 
-            // Delete old skills and insert new ones as a single row
             UserSkill::updateOrCreate(
                 ['user_id' => $user->id],
-                ['skill_name' => implode(',', $request->skills)] // Store as comma-separated string
+                ['skill_name' => implode(',', $request->skills)]
             );
 
             return response()->json(['message' => 'Skills updated successfully'], 200);
@@ -116,5 +119,54 @@ class RegisterController extends Controller
     }
 
 
+    public function updateProfile(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'name' => 'nullable|string|max:255',
+            'nickname' => 'nullable|string|max:255',
+            'gender' => 'nullable|string|in:male,female,other',
+            'dob' => 'nullable|date',
+            'profile_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
+        ]);
 
+        if ($validator->fails()) {
+            return response()->json(['message' => $validator->errors()->first()], 422);
+        }
+
+        $user = auth()->user();
+        if (!$user) {
+            return response()->json(['message' => 'Unauthorized or session expired'], 401);
+        }
+
+        // ✅ Profile Image Upload
+        if ($request->hasFile('profile_image')) {
+            // Pehle purani image delete kar do
+            if ($user->profile_image) {
+                Storage::disk('public')->delete($user->profile_image);
+            }
+
+            // Nayi image save karo
+            $imagePath = $request->file('profile_image')->store('profile_images', 'public');
+            $user->profile_image = $imagePath;
+        }
+
+        // ✅ Update Other Fields
+        $user->name = $request->name ?? $user->name;
+        $user->nickname = $request->nickname ?? $user->nickname;
+        $user->gender = $request->gender ?? $user->gender;
+        $user->dob = $request->dob ?? $user->dob;
+        $user->save();
+
+        return response()->json([
+            'message' => 'Profile updated successfully',
+            'user' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'nickname' => $user->nickname,
+                'gender' => $user->gender,
+                'dob' => $user->dob,
+                'profile_image' => $user->profile_image ? asset('storage/' . $user->profile_image) : null,
+            ]
+        ], 200);
+    }
 }
