@@ -16,7 +16,9 @@ class User extends Authenticatable
     protected $fillable = [
         'name', 'username', 'email', 'password', 'school_college_name',
         'city', 'mobile_number', 'full_address', 'role', 'otp_expires_at',
-        'nickname', 'gender', 'dob', 'profile_image'
+        'nickname', 'gender', 'dob', 'profile_image', 'description',
+        'mentorship', 'community', 'profile_photo', 'profile_video',
+        'followers', 'following', 'blocked_users', 'reported_users', 'can_share_profile'
     ];
 
     protected $hidden = [
@@ -28,21 +30,26 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'otp_expires_at' => 'datetime',
         'dob' => 'date',
+        'mentorship' => 'boolean',
+        'community' => 'boolean',
+        'can_share_profile' => 'boolean',
+        'followers' => 'array',
+        'following' => 'array',
+        'blocked_users' => 'array',
+        'reported_users' => 'array',
     ];
-
-    // public function setPasswordAttribute($value)
-    // {
-    //     if (!empty($value) && !Hash::needsRehash($value)) {
-    //         $this->attributes['password'] = Hash::make($value);
-    //     }
-    // }
 
     public function getProfileImageAttribute($value)
     {
         return $value ? asset('storage/' . $value) : null;
     }
 
-    // ✅ User Skills Relationship
+    // Profile Video Accessor
+    public function getProfileVideoAttribute($value)
+    {
+        return $value ? asset('storage/' . $value) : null;
+    }
+
     public function skills()
     {
         return $this->hasMany(UserSkill::class);

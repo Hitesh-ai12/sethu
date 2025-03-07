@@ -26,7 +26,8 @@ class RegisterController extends Controller
             'city' => 'nullable|string|max:100',
             'mobile_number' => 'required|digits:10|unique:users,mobile_number',
             'full_address' => 'nullable|string|max:500',
-            'role' => 'required|string|in:teacher,admin,student'
+            'role' => 'required|string|in:teacher,admin,student',
+            'description' => 'nullable|string|max:1000',
         ]);
 
         if ($validator->fails()) {
@@ -45,6 +46,7 @@ class RegisterController extends Controller
             'mobile_number' => $request->mobile_number,
             'full_address' => $request->full_address,
             'role' => $request->role,
+            'description' => $request->description,
         ]);
 
         $token = $user->createToken('auth_token')->plainTextToken;
@@ -62,6 +64,11 @@ class RegisterController extends Controller
                 'city' => $user->city,
                 'full_address' => $user->full_address,
                 'role' => $user->role,
+                'description' => $user->description,
+                'mentorship' => 'nullable|boolean',
+                'community' => 'nullable|boolean',
+                'profile_photo' => 'nullable|image|mimes:jpg,png,jpeg|max:2048',
+                'profile_video' => 'nullable|mimes:mp4,mov,avi|max:10000',
             ]
         ], 201);
     }
