@@ -9,6 +9,12 @@ use Illuminate\Validation\ValidationException;
 
 class UserController extends Controller
 {
+    public function index()
+    {
+        $users = User::all();
+        return view('user-management', compact('users'));
+    }
+
     public function register(Request $request)
     {
         $request->validate([

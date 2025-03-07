@@ -41,16 +41,16 @@
                 </div>
             </div>
 
-            <div class="text-right">
+            <!--div class="text-right">
                 <a href="{{ route('password.request') }}" class="text-sm text-orange-500">Forgot password?</a>
-            </div>
+            </div-->
 
             <button type="submit" class="w-full py-2 text-white bg-orange-500 rounded hover:bg-orange-600">
                 Sign In
             </button>
         </form>
 
-        <div class="flex items-center justify-center">
+        <!--div class="flex items-center justify-center">
             <span class="text-sm text-gray-500">Or</span>
         </div>
 
@@ -60,7 +60,7 @@
         <p class="text-center text-sm">
             Don’t have an account?
             <a href="{{ route('sign-up') }}" class="text-orange-500 font-bold">Sign up</a>
-        </p>
+        </p-->
     </div>
 
 <script>
@@ -84,12 +84,12 @@
     $("#loader-overlay").removeClass("hidden");
 
     $.ajax({
-        url: "{{ route('login') }}",  // ✅ API route hatao, web.php ka route use karo
+        url: "{{ route('login') }}",
         type: "POST",
         data: {
             email: email,
             password: password,
-            _token: csrfToken // ✅ CSRF token pass karna zaroori hai for web.php
+            _token: csrfToken
         },
         success: function (response) {
             $("#loader-overlay").addClass("hidden");

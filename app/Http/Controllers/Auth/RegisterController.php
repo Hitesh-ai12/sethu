@@ -26,6 +26,7 @@ class RegisterController extends Controller
             'city' => 'nullable|string|max:100',
             'mobile_number' => 'required|digits:10|unique:users,mobile_number',
             'full_address' => 'nullable|string|max:500',
+            'role' => 'required|string|in:teacher,admin,student'
         ]);
 
         if ($validator->fails()) {
@@ -43,10 +44,9 @@ class RegisterController extends Controller
             'city' => $request->city,
             'mobile_number' => $request->mobile_number,
             'full_address' => $request->full_address,
-            'role' => 'user',
+            'role' => $request->role,
         ]);
 
-        // Create token for the registered user
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()->json([
@@ -61,6 +61,7 @@ class RegisterController extends Controller
                 'school_college_name' => $user->school_college_name,
                 'city' => $user->city,
                 'full_address' => $user->full_address,
+                'role' => $user->role,
             ]
         ], 201);
     }

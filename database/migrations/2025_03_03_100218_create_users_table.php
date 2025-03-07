@@ -17,7 +17,7 @@ return new class extends Migration {
             $table->string('city')->nullable();
             $table->string('mobile_number')->unique();
             $table->text('full_address')->nullable();
-            $table->enum('role', ['user', 'admin'])->default('user');
+            $table->enum('role', ['teacher', 'admin', 'student'])->default('student');
             $table->timestamps();
         });
     }

@@ -6,12 +6,20 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<style>
+.a{
+    text-align: center;
+}
+</style>
 </head>
 <body class="bg-gray-100">
-
-    <!-- Sidebar + Content Wrapper -->
     <div class="flex h-screen">
-        <!-- Sidebar -->
         <aside class="w-64 bg-white shadow-md p-5">
             <h2 class="text-xl font-bold text-orange-600">Sethu</h2>
             <ul class="mt-5">
@@ -24,15 +32,12 @@
             </ul>
         </aside>
 
-        <!-- Main Content -->
         <div class="flex-1 flex flex-col">
-            <!-- Header -->
             <header class="bg-white shadow-md sticky top-0 w-full p-4 flex justify-between items-center">
                 <h1 class="text-lg font-semibold">Dashboard</h1>
                 <div class="flex items-center space-x-4">
                     <input type="text" placeholder="Search..." class="border p-2 rounded-md">
 
-                    <!-- Dropdown -->
                     <div x-data="{ open: false }" class="relative">
                         <button @click="open = !open" class="flex items-center space-x-2 focus:outline-none">
                             <span>{{ Auth::user()->business_name ?? 'Guest' }}</span>
@@ -41,31 +46,21 @@
                             </svg>
                         </button>
 
-                        <!-- Dropdown Menu -->
                         <div x-show="open" @click.away="open = false" class="absolute right-0 mt-2 w-40 bg-white shadow-lg rounded-md overflow-hidden border z-50">
                             <a href="/profile" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Profile</a>
 
                             <button type="submit" class="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100" id="logoutBtn">Logout</button>
-
                         </div>
                     </div>
                 </div>
             </header>
-
-
-
-
-            <!-- Page Content -->
             <main class="p-6">
                 @yield('content')
             </main>
         </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> <!-- ✅ SweetAlert -->
-    <script>
+
+<script>
     $(document).ready(function () {
         $('#logoutBtn').click(function () {
             $.ajax({
@@ -85,7 +80,7 @@
                         timer: 2000,
                         showConfirmButton: false
                     }).then(() => {
-                        window.location.href = response.redirect; // ✅ Redirect to dashboard
+                        window.location.href = response.redirect;
                     });
                 },
                 error: function (xhr) {
@@ -95,6 +90,5 @@
         });
     });
 </script>
-
 </body>
 </html>

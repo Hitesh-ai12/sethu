@@ -30,15 +30,13 @@ class User extends Authenticatable
         'dob' => 'date',
     ];
 
-    // ✅ Password Hashing Fix
-    public function setPasswordAttribute($value)
-    {
-        if (!empty($value)) {
-            $this->attributes['password'] = Hash::make($value);
-        }
-    }
+    // public function setPasswordAttribute($value)
+    // {
+    //     if (!empty($value) && !Hash::needsRehash($value)) {
+    //         $this->attributes['password'] = Hash::make($value);
+    //     }
+    // }
 
-    // ✅ Profile Image Full URL
     public function getProfileImageAttribute($value)
     {
         return $value ? asset('storage/' . $value) : null;
