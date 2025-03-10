@@ -193,6 +193,19 @@ class RegisterController extends Controller
         ], 200);
     }
 
+    public function fetchTeachers(Request $request)
+    {
+        if (!$request->user()) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+
+        $teachers = User::where('role', 'teacher')->get();
+
+        return response()->json([
+            'success' => true,
+            'teachers' => $teachers
+        ]);
+    }
 
     public function getProfile(Request $request)
     {
