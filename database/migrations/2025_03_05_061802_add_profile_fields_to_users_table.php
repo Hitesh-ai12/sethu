@@ -12,13 +12,14 @@ return new class extends Migration {
             $table->enum('gender', ['male', 'female', 'other'])->nullable()->after('nickname');
             $table->date('dob')->nullable()->after('gender');
             $table->string('profile_image')->nullable()->after('dob');
+            $table->text('subject')->nullable()->after('profile_image');
         });
     }
 
     public function down()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn(['nickname', 'gender', 'dob', 'profile_image']);
+            $table->dropColumn(['nickname', 'gender', 'dob', 'profile_image', 'subject']);
         });
     }
 };

@@ -65,10 +65,7 @@ class RegisterController extends Controller
                 'full_address' => $user->full_address,
                 'role' => $user->role,
                 'description' => $user->description,
-                'mentorship' => 'nullable|boolean',
-                'community' => 'nullable|boolean',
-                'profile_photo' => 'nullable|image|mimes:jpg,png,jpeg|max:2048',
-                'profile_video' => 'nullable|mimes:mp4,mov,avi|max:10000',
+
             ]
         ], 201);
     }
@@ -136,7 +133,8 @@ class RegisterController extends Controller
             'nickname' => 'nullable|string|max:255',
             'gender' => 'nullable|string|in:male,female,other',
             'dob' => 'nullable|date',
-            'profile_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
+            'profile_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'subject' => 'nullable|string|max:500'
         ]);
 
         if ($validator->fails()) {
@@ -162,7 +160,9 @@ class RegisterController extends Controller
         if ($request->has('dob')) {
             $updateFields['dob'] = $request->dob;
         }
-
+        if ($request->has('subject')) {
+            $updateFields['subject'] = $request->subject;
+        }
 
         if ($request->hasFile('profile_image')) {
 
@@ -188,9 +188,11 @@ class RegisterController extends Controller
                 'gender' => $user->gender,
                 'dob' => $user->dob,
                 'profile_image' => $user->profile_image ? asset('storage/' . $user->profile_image) : null,
+                'subject' => $user->subject,
             ]
         ], 200);
     }
+
 
     public function getProfile(Request $request)
     {
@@ -214,8 +216,86 @@ class RegisterController extends Controller
                 'city' => $user->city,
                 'full_address' => $user->full_address,
                 'role' => $user->role,
+                'description' => $user->description,
+                'mentorship' => $user->mentorship,
+                'community' => $user->community,
+                'profile_photo' => $user->profile_photo ? asset('storage/' . $user->profile_photo) : null,
+                'profile_video' => $user->profile_video ? asset('storage/' . $user->profile_video) : null,
+                'followers' => $user->followers,
+                'following' => $user->following,
+                'blocked_users' => $user->blocked_users,
+                'reported_users' => $user->reported_users,
+                'can_share_profile' => $user->can_share_profile,
+                'subject' => $user->subject,
             ]
         ], 200);
+    }
+
+    public function blockUser(Request $request)
+    {
+        $user = auth()->user();
+        $blockedUser = User::find($request->user_id);
+
+        if (!$blockedUser) {
+            return response()->json(['message' => 'User not found'], 404);
+        }
+
+        if ($user->id == $blockedUser->id) {
+            return response()->json(['message' => 'You cannot block yourself'], 400);
+        }
+
+        // Add to blocked users list
+        $blockedUsers = $user->blocked_users ?? [];
+        if (!in_array($blockedUser->id, $blockedUsers)) {
+            $blockedUsers[] = $blockedUser->id;
+        }
+
+        // Remove from followers and following
+        $user->followers = array_values(array_diff($user->followers ?? [], [$blockedUser->id]));
+        $user->following = array_values(array_diff($user->following ?? [], [$blockedUser->id]));
+
+        $user->blocked_users = $blockedUsers;
+        $user->save();
+
+        return response()->json(['message' => 'User blocked successfully'], 200);
+    }
+
+    public function unblockUser(Request $request)
+    {
+        $user = auth()->user();
+        $unblockedUser = User::find($request->user_id);
+
+        if (!$unblockedUser) {
+            return response()->json(['message' => 'User not found'], 404);
+        }
+
+        $blockedUsers = $user->blocked_users ?? [];
+        $blockedUsers = array_values(array_diff($blockedUsers, [$unblockedUser->id]));
+
+        $user->blocked_users = $blockedUsers;
+        $user->save();
+
+        return response()->json(['message' => 'User unblocked successfully'], 200);
+    }
+
+    public function getblockedProfile(Request $request, $id)
+    {
+        $user = auth()->user();
+        $targetUser = User::find($id);
+
+        if (!$targetUser) {
+            return response()->json(['message' => 'User not found'], 404);
+        }
+
+        if (in_array($user->id, $targetUser->blocked_users)) {
+            return response()->json(['message' => 'You are blocked by this user'], 403);
+        }
+
+        if (in_array($targetUser->id, $user->blocked_users)) {
+            return response()->json(['message' => 'You have blocked this user'], 403);
+        }
+
+        return response()->json(['user' => $targetUser], 200);
     }
 
 }

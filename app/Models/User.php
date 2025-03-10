@@ -18,7 +18,7 @@ class User extends Authenticatable
         'city', 'mobile_number', 'full_address', 'role', 'otp_expires_at',
         'nickname', 'gender', 'dob', 'profile_image', 'description',
         'mentorship', 'community', 'profile_photo', 'profile_video',
-        'followers', 'following', 'blocked_users', 'reported_users', 'can_share_profile'
+        'followers', 'following', 'blocked_users', 'reported_users', 'can_share_profile', 'subject'
     ];
 
     protected $hidden = [
@@ -39,10 +39,6 @@ class User extends Authenticatable
         'reported_users' => 'array',
     ];
 
-    public function getProfileImageAttribute($value)
-    {
-        return $value ? asset('storage/' . $value) : null;
-    }
 
     // Profile Video Accessor
     public function getProfileVideoAttribute($value)

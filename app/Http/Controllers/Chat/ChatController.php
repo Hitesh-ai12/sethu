@@ -4,9 +4,14 @@ namespace App\Http\Controllers\Chat;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+use App\Models\Chat;
+use App\Models\Message;
+use App\Models\ChatParticipant;
 
 class ChatController extends Controller
 {
+
     public function createChat(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -29,6 +34,7 @@ class ChatController extends Controller
 
         return response()->json(['message' => 'Chat created!', 'chat_id' => $chat->id], 201);
     }
+
     public function sendMessage(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -56,6 +62,7 @@ class ChatController extends Controller
 
         return response()->json(['message' => 'Message sent!', 'data' => $message], 201);
     }
+
     public function getChatMessages($chat_id)
     {
         $chat = Chat::with('messages.sender')->find($chat_id);
