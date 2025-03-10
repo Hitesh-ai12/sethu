@@ -282,33 +282,44 @@ class RegisterController extends Controller
             return response()->json(['message' => 'User not found'], 404);
         }
 
+        // Fetch blocked users list
         $blockedUsers = $user->blocked_users ?? [];
+
+        // Check if user is actually blocked
+        if (!in_array($unblockedUser->id, $blockedUsers)) {
+            return response()->json(['message' => 'User is not blocked'], 400);
+        }
+
+        // Remove the user from the blocked list
         $blockedUsers = array_values(array_diff($blockedUsers, [$unblockedUser->id]));
 
+        // Update user data
         $user->blocked_users = $blockedUsers;
         $user->save();
 
-        return response()->json(['message' => 'User unblocked successfully'], 200);
+        return response()->json([
+            'message' => 'User unblocked successfully',
+            'unblocked_user' => [
+                'id' => $unblockedUser->id,
+                'name' => $unblockedUser->name,
+                'email' => $unblockedUser->email
+            ]
+        ], 200);
     }
 
-    public function getblockedProfile(Request $request, $id)
+
+    public function getBlockedUsers()
     {
         $user = auth()->user();
-        $targetUser = User::find($id);
 
-        if (!$targetUser) {
-            return response()->json(['message' => 'User not found'], 404);
-        }
+        // Fetch blocked users with ID, name, and email
+        $blockedUsers = User::whereIn('id', $user->blocked_users ?? [])
+            ->select('id', 'name', 'email')
+            ->get();
 
-        if (in_array($user->id, $targetUser->blocked_users)) {
-            return response()->json(['message' => 'You are blocked by this user'], 403);
-        }
-
-        if (in_array($targetUser->id, $user->blocked_users)) {
-            return response()->json(['message' => 'You have blocked this user'], 403);
-        }
-
-        return response()->json(['user' => $targetUser], 200);
+        return response()->json(['blocked_users' => $blockedUsers], 200);
     }
+
+
 
 }

@@ -75,12 +75,10 @@ class LoginController extends Controller
         $loginField = filter_var($request->email_or_phone, FILTER_VALIDATE_EMAIL) ? 'email' : 'mobile_number';
         $user = User::where($loginField, strtolower($request->email_or_phone))->first();
 
-        // ✅ Ensure password is hashed before checking
         if (!$user || !Hash::check($request->password, $user->password)) {
             return response()->json(['message' => 'Invalid credentials'], 401);
         }
 
-        // ✅ Create API Token
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()->json([
@@ -94,6 +92,7 @@ class LoginController extends Controller
                 'school_college_name' => $user->school_college_name,
                 'city' => $user->city,
                 'full_address' => $user->full_address,
+                'role' => $user->role,
             ]
         ], 200);
     }
@@ -102,14 +101,9 @@ class LoginController extends Controller
     public function logoutapi(Request $request)
     {
         $user = $request->user();
-
-        // Revoke the user's token
         $user->tokens->each(function ($token) {
             $token->delete();
         });
-
-
-
         return response()->json(['message' => 'Logged out successfully'], 200);
     }
 }

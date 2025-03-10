@@ -27,7 +27,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::post('/block-user', [RegisterController::class, 'blockUser']);
     Route::post('/unblock-user', [RegisterController::class, 'unblockUser']);
-    Route::get('/featch-blocked-user', [RegisterController::class, 'getblockedProfile']);
+    Route::get('/featch-blocked-user', [RegisterController::class, 'getBlockedUsers']);
 
     Route::get('/teachers', [RegisterController::class, 'fetchTeachers']);
 });
