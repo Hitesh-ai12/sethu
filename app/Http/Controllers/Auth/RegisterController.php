@@ -199,11 +199,36 @@ class RegisterController extends Controller
             return response()->json(['message' => 'Unauthorized'], 401);
         }
 
-        $teachers = User::where('role', 'teacher')->get();
+        $request->validate([
+            'subject' => 'nullable|string|max:255'
+        ]);
+
+        $query = User::where('role', 'teacher');
+
+        if ($request->has('subject') && !empty($request->subject)) {
+            $query->where('subject', 'LIKE', '%' . $request->subject . '%');
+        }
+
+        $teachers = $query->get(['id', 'name', 'email', 'subject', 'city', 'profile_image']);
 
         return response()->json([
             'success' => true,
             'teachers' => $teachers
+        ]);
+    }
+
+    public function getTeacherById($id)
+    {
+        $teacher = User::where('role', 'teacher')->where('id', $id)
+            ->first(['id', 'name', 'email', 'subject', 'city', 'profile_image']);
+
+        if (!$teacher) {
+            return response()->json(['message' => 'Teacher not found'], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'teacher' => $teacher
         ]);
     }
 
@@ -257,13 +282,11 @@ class RegisterController extends Controller
             return response()->json(['message' => 'You cannot block yourself'], 400);
         }
 
-        // Add to blocked users list
         $blockedUsers = $user->blocked_users ?? [];
         if (!in_array($blockedUser->id, $blockedUsers)) {
             $blockedUsers[] = $blockedUser->id;
         }
 
-        // Remove from followers and following
         $user->followers = array_values(array_diff($user->followers ?? [], [$blockedUser->id]));
         $user->following = array_values(array_diff($user->following ?? [], [$blockedUser->id]));
 
@@ -282,18 +305,14 @@ class RegisterController extends Controller
             return response()->json(['message' => 'User not found'], 404);
         }
 
-        // Fetch blocked users list
         $blockedUsers = $user->blocked_users ?? [];
 
-        // Check if user is actually blocked
         if (!in_array($unblockedUser->id, $blockedUsers)) {
             return response()->json(['message' => 'User is not blocked'], 400);
         }
 
-        // Remove the user from the blocked list
         $blockedUsers = array_values(array_diff($blockedUsers, [$unblockedUser->id]));
 
-        // Update user data
         $user->blocked_users = $blockedUsers;
         $user->save();
 
@@ -312,14 +331,11 @@ class RegisterController extends Controller
     {
         $user = auth()->user();
 
-        // Fetch blocked users with ID, name, and email
         $blockedUsers = User::whereIn('id', $user->blocked_users ?? [])
             ->select('id', 'name', 'email')
             ->get();
 
         return response()->json(['blocked_users' => $blockedUsers], 200);
     }
-
-
 
 }

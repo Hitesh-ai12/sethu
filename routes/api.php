@@ -8,7 +8,7 @@ use App\Http\Controllers\Chat\ChatController;
 
 Route::post('/register', [RegisterController::class, 'register'])->name('api.register');
 Route::post('/login', [LoginController::class, 'apilogin']);
-Route::get('/teachers', [RegisterController::class, 'fetchTeachers']);
+// Route::get('/teachers', [RegisterController::class, 'fetchTeachers']);
 
 Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetOTP']);
 Route::post('/verify-otp', [ForgotPasswordController::class, 'verifyOTP']);
@@ -30,6 +30,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/featch-blocked-user', [RegisterController::class, 'getBlockedUsers']);
 
     Route::get('/teachers', [RegisterController::class, 'fetchTeachers']);
+    Route::get('/teachers/{id}', [RegisterController::class, 'getTeacherById']);
+
 });
 
 
