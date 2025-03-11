@@ -31,6 +31,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/teachers', [RegisterController::class, 'fetchTeachers']);
     Route::get('/teachers/{id}', [RegisterController::class, 'getTeacherById']);
+    Route::get('/search-users', [RegisterController::class, 'searchUsers']);
+
 
 });
 

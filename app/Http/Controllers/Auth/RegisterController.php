@@ -93,6 +93,7 @@ class RegisterController extends Controller
         return response()->json(['message' => 'City updated successfully'], 200);
     }
 
+
     public function personalizeSkills(Request $request)
     {
         try {
@@ -193,6 +194,7 @@ class RegisterController extends Controller
         ], 200);
     }
 
+
     public function fetchTeachers(Request $request)
     {
         if (!$request->user()) {
@@ -217,6 +219,7 @@ class RegisterController extends Controller
         ]);
     }
 
+
     public function getTeacherById($id)
     {
         $teacher = User::where('role', 'teacher')->where('id', $id)
@@ -229,6 +232,28 @@ class RegisterController extends Controller
         return response()->json([
             'success' => true,
             'teacher' => $teacher
+        ]);
+    }
+
+    public function searchUsers(Request $request)
+    {
+        $request->validate([
+            'query' => 'required|string|max:255'
+        ]);
+
+        $searchTerm = $request->query('query');
+
+        $users = User::where('name', 'LIKE', "%{$searchTerm}%")
+            ->orWhere('username', 'LIKE', "%{$searchTerm}%")
+            ->get(['id', 'name', 'username', 'email', 'city', 'profile_image']);
+
+        if ($users->isEmpty()) {
+            return response()->json(['message' => 'No users found'], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'users' => $users
         ]);
     }
 
@@ -269,6 +294,7 @@ class RegisterController extends Controller
         ], 200);
     }
 
+
     public function blockUser(Request $request)
     {
         $user = auth()->user();
@@ -295,6 +321,7 @@ class RegisterController extends Controller
 
         return response()->json(['message' => 'User blocked successfully'], 200);
     }
+
 
     public function unblockUser(Request $request)
     {
