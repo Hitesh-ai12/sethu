@@ -18,35 +18,20 @@
             <tbody>
                 @foreach($users as $user)
                     <tr>
-                        <td class="border px-4 py-2 a">{{ $user->id }}</td>
-                        <td class="border px-4 py-2 a">{{ $user->name }}</td>
-                        <td class="border px-4 py-2 a">{{ $user->email }}</td>
-                        <td class="border px-4 py-2 a">{{ $user->mobile_number }}</td>
-                        <td class="border px-4 py-2 a">{{ ucfirst($user->role) }}</td>
-                        <td class="border px-4 py-2 a">
-                            <button class="bg-blue-500 text-white px-3 py-1 rounded">Edit</button>
-                            <button class="bg-red-500 text-white px-3 py-1 rounded">Delete</button>
-                            <button class="bg-red-500 text-white px-3 py-1 rounded approve">Approve</button>
-                            <button class="bg-red-500 text-white px-3 py-1 rounded dcline">Dcline</button>
+                        <td class="border px-4 py-2">{{ $user->id }}</td>
+                        <td class="border px-4 py-2">{{ $user->name }}</td>
+                        <td class="border px-4 py-2">{{ $user->email }}</td>
+                        <td class="border px-4 py-2">{{ $user->mobile_number }}</td>
+                        <td class="border px-4 py-2">{{ ucfirst($user->role) }}</td>
+                        <td class="border px-4 py-2">
+                            <button class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded">Edit</button>
+                            <button class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded">Delete</button>
+                            <button class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded approve">Approve</button>
+                            <button class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded decline">Decline</button>
                         </td>
                     </tr>
                 @endforeach
             </tbody>
         </table>
     </div>
-@endsection
-
-@section('scripts')
-    <script>
-        $(document).ready(function() {
-            $('#userTable').DataTable({
-                "paging": true,
-                "searching": true,
-                "responsive": true,
-                "autoWidth": false,
-                "lengthMenu": [10, 25, 50, 100],
-                "order": [[0, "desc"]],
-            });
-        });
-    </script>
 @endsection
