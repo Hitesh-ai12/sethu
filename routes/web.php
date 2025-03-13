@@ -17,6 +17,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/announcements', fn() => view('announcements'))->name('announcements');
     Route::get('/notifications', fn() => view('notifications'))->name('notifications');
     Route::get('/settings', fn() => view('settings'))->name('settings');
+    Route::delete('/delete-user/{id}', [UserController::class, 'deleteUser']);
+
 });
 
 // ✅ Login & Logout Routes

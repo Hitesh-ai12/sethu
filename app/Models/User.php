@@ -18,7 +18,7 @@ class User extends Authenticatable
         'city', 'mobile_number', 'full_address', 'role', 'otp_expires_at',
         'nickname', 'gender', 'dob', 'profile_image', 'description',
         'mentorship', 'community', 'profile_photo', 'profile_video',
-        'followers', 'following', 'blocked_users', 'reported_users', 'can_share_profile', 'subject'
+        'followers', 'following', 'blocked_users', 'reported_users', 'can_share_profile', 'subject','status'
     ];
 
     protected $hidden = [

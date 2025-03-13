@@ -5,6 +5,8 @@ use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Chat\ChatController;
+use App\Http\Controllers\Post\PostController;
+
 
 Route::post('/register', [RegisterController::class, 'register'])->name('api.register');
 Route::post('/login', [LoginController::class, 'apilogin']);
@@ -32,7 +34,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/teachers', [RegisterController::class, 'fetchTeachers']);
     Route::get('/teachers/{id}', [RegisterController::class, 'getTeacherById']);
     Route::get('/search-users', [RegisterController::class, 'searchUsers']);
-
+    // Route::post('/approve-user/{id}', [UserController::class, 'approveUser']);
+    Route::post('/change-status/{id}', [UserController::class, 'changeStatus']);
+    Route::post('/create-post', [PostController::class, 'store']);
 
 });
 

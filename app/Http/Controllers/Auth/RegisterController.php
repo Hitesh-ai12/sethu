@@ -47,6 +47,7 @@ class RegisterController extends Controller
             'full_address' => $request->full_address,
             'role' => $request->role,
             'description' => $request->description,
+            'status' => 'pending'
         ]);
 
         $token = $user->createToken('auth_token')->plainTextToken;
@@ -65,7 +66,7 @@ class RegisterController extends Controller
                 'full_address' => $user->full_address,
                 'role' => $user->role,
                 'description' => $user->description,
-
+                'status' => $user->status,
             ]
         ], 201);
     }
