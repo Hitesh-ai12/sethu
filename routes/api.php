@@ -35,8 +35,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/teachers/{id}', [RegisterController::class, 'getTeacherById']);
     Route::get('/search-users', [RegisterController::class, 'searchUsers']);
     // Route::post('/approve-user/{id}', [UserController::class, 'approveUser']);
-    Route::post('/change-status/{id}', [UserController::class, 'changeStatus']);
+    // Route::post('/change-status/{id}', [UserController::class, 'changeStatus']);
     Route::post('/create-post', [PostController::class, 'store']);
+    Route::get('/posts', [PostController::class, 'getPosts']);
+
 
 });
 
