@@ -24,26 +24,25 @@
                         <td class="border px-4 py-2">{{ $user->mobile_number }}</td>
                         <td class="border px-4 py-2">{{ ucfirst($user->role) }}</td>
                         <td class="border px-4 py-2">
-    <!-- View Button -->
-    <button onclick="openModal({{ $user }})"
-        class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded">View</button>
+                        <!-- View Button -->
+                        <button onclick="openModal({{ $user }})"
+                            class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded">View</button>
 
-    @if($user->role == 'teacher' || $user->role == 'student')
-        <button onclick="confirmDelete({{ $user->id }})"
-            class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded">Delete</button>
-    @endif
+                        @if($user->role == 'teacher' || $user->role == 'student')
+                            <button onclick="confirmDelete({{ $user->id }})"
+                                class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded">Delete</button>
+                        @endif
 
-    @if($user->status == 'pending')
-        <!-- Approve Button: Show when status is 'pending' -->
-        <button onclick="changeStatus({{ $user->id }}, 'approved')"
-            class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded">Approve</button>
-    @else
-        <!-- Pending Button: Show when status is 'approved' -->
-        <button onclick="changeStatus({{ $user->id }}, 'pending')"
-            class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded">Pending</button>
-    @endif
-</td>
-
+                        @if($user->status == 'pending')
+                            <!-- Approve Button: Show when status is 'pending' -->
+                            <button onclick="changeStatus({{ $user->id }}, 'approved')"
+                                class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded">Approve</button>
+                        @else
+                            <!-- Pending Button: Show when status is 'approved' -->
+                            <button onclick="changeStatus({{ $user->id }}, 'pending')"
+                                class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded">Pending</button>
+                        @endif
+                    </td>
                     </tr>
                 @endforeach
             </tbody>

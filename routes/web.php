@@ -19,6 +19,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/settings', fn() => view('settings'))->name('settings');
     Route::delete('/delete-user/{id}', [UserController::class, 'deleteUser']);
     Route::post('/change-status/{id}', [UserController::class, 'changeStatus']);
+    Route::get('/location', [LocationController::class, 'index'])->name('location');
 
 });
 

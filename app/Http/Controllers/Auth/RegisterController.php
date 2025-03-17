@@ -129,7 +129,6 @@ class RegisterController extends Controller
     public function updateProfile(Request $request)
     {
 
-
         $validator = Validator::make($request->all(), [
             'name' => 'nullable|string|max:255',
             'nickname' => 'nullable|string|max:255',
@@ -236,7 +235,6 @@ class RegisterController extends Controller
         ]);
     }
 
-
     public function searchUsers(Request $request)
     {
         $request->validate([
@@ -247,6 +245,11 @@ class RegisterController extends Controller
 
         $users = User::where('name', 'LIKE', "%{$searchTerm}%")
             ->orWhere('username', 'LIKE', "%{$searchTerm}%")
+            ->orWhere('email', 'LIKE', "%{$searchTerm}%")
+            ->orWhere('school_college_name', 'LIKE', "%{$searchTerm}%")
+            ->orWhere('city', 'LIKE', "%{$searchTerm}%")
+            ->orWhere('full_address', 'LIKE', "%{$searchTerm}%")
+            ->orWhere('subject', 'LIKE', "%{$searchTerm}%")
             ->get(['id', 'name', 'username', 'email', 'city', 'profile_image']);
 
         if ($users->isEmpty()) {

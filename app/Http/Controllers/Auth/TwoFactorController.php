@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Session; // ✅ Correct Import
+use Illuminate\Support\Facades\Session;
 use App\Models\User;
 
 class TwoFactorController extends Controller

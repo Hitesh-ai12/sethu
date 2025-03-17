@@ -39,6 +39,8 @@
                 <li class="py-2"><a href="{{ route('announcements') }}" class="text-gray-700">Announcements</a></li>
                 <li class="py-2"><a href="{{ route('notifications') }}" class="text-gray-700">Notifications</a></li>
                 <li class="py-2"><a href="{{ route('settings') }}" class="text-gray-700">Settings</a></li>
+                <li class="py-2"><a href="{{ route('location') }}" class="text-gray-700">Location</a></li>
+
             </ul>
         </aside>
 
@@ -80,8 +82,6 @@
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
                 success: function (response) {
-                    // console.log("Logout Response:", response);
-                    // alert(response.message);
 
                     Swal.fire({
                         icon: "success",

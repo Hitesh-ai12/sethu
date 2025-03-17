@@ -40,7 +40,6 @@ class User extends Authenticatable
     ];
 
 
-    // Profile Video Accessor
     public function getProfileVideoAttribute($value)
     {
         return $value ? asset('storage/' . $value) : null;

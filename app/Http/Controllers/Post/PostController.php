@@ -11,7 +11,8 @@ use Illuminate\Support\Facades\Auth;
 
 class PostController extends Controller
 {
-    public function store(Request $request) {
+    public function store(Request $request)
+     {
         $request->validate([
             'content' => 'nullable|string|max:1000',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
