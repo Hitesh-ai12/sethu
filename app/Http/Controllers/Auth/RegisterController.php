@@ -250,7 +250,7 @@ class RegisterController extends Controller
             ->orWhere('city', 'LIKE', "%{$searchTerm}%")
             ->orWhere('full_address', 'LIKE', "%{$searchTerm}%")
             ->orWhere('subject', 'LIKE', "%{$searchTerm}%")
-            ->get(['id', 'name', 'username', 'email', 'city', 'profile_image','school_college_name',]);
+            ->get(['id', 'name', 'username', 'email','subject', 'city', 'profile_image','school_college_name', 'description', 'full_address']);
 
         if ($users->isEmpty()) {
             return response()->json(['message' => 'No users found'], 404);
