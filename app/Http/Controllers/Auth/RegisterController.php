@@ -211,7 +211,7 @@ class RegisterController extends Controller
             $query->where('subject', 'LIKE', '%' . $request->subject . '%');
         }
 
-        $teachers = $query->get(['id', 'name', 'email', 'subject', 'city', 'profile_image', 'description', 'school_college_name']);
+        $teachers = $query->get(['id', 'name', 'email', 'subject', 'city', 'profile_image', 'description', 'school_college_name', 'full_address']);
 
         return response()->json([
             'success' => true,
@@ -250,7 +250,7 @@ class RegisterController extends Controller
             ->orWhere('city', 'LIKE', "%{$searchTerm}%")
             ->orWhere('full_address', 'LIKE', "%{$searchTerm}%")
             ->orWhere('subject', 'LIKE', "%{$searchTerm}%")
-            ->get(['id', 'name', 'username', 'email', 'city', 'profile_image']);
+            ->get(['id', 'name', 'username', 'email', 'city', 'profile_image','school_college_name',]);
 
         if ($users->isEmpty()) {
             return response()->json(['message' => 'No users found'], 404);
