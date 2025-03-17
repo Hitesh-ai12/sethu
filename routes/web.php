@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Post\LocationController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\UserController;
 
@@ -19,8 +20,13 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/settings', fn() => view('settings'))->name('settings');
     Route::delete('/delete-user/{id}', [UserController::class, 'deleteUser']);
     Route::post('/change-status/{id}', [UserController::class, 'changeStatus']);
-    Route::get('/location', [LocationController::class, 'index'])->name('location');
+    // In routes/web.php
+Route::get('/location', fn() => view('location'))->name('location');
 
+    Route::get('/locations', [LocationController::class, 'getLocations'])->name('get.locations');
+    Route::post('/add-location', [LocationController::class, 'addLocation'])->name('add.location');
+    Route::delete('/delete-location/{id}', [LocationController::class, 'deleteLocation']);
+    Route::put('/update-location/{id}', [LocationController::class, 'updateLocation']);
 });
 
 // ✅ Login & Logout Routes

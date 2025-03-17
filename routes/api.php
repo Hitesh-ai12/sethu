@@ -6,7 +6,7 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Chat\ChatController;
 use App\Http\Controllers\Post\PostController;
-
+use App\Http\Controllers\Post\LocationController;
 
 Route::post('/register', [RegisterController::class, 'register'])->name('api.register');
 Route::post('/login', [LoginController::class, 'apilogin']);
@@ -38,8 +38,9 @@ Route::middleware('auth:sanctum')->group(function () {
     // Route::post('/change-status/{id}', [UserController::class, 'changeStatus']);
     Route::post('/create-post', [PostController::class, 'store']);
     Route::get('/posts', [PostController::class, 'getPosts']);
-
+    Route::get('/locations', [LocationController::class, 'ApigetLocations']);
 
 });
+
 
 
