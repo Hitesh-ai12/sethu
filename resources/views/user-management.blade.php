@@ -69,7 +69,6 @@
                 }).then(response => response.json())
                   .then(data => {
                       if (data.success) {
-                          // ✅ SweetAlert2 Success Alert
                           Swal.fire({
                               title: "Deleted!",
                               text: "User has been deleted.",

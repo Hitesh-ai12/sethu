@@ -49,4 +49,60 @@ class User extends Authenticatable
     {
         return $this->hasMany(UserSkill::class);
     }
+
+    public function follow($userId)
+    {
+        $followers = $this->followers ?? [];
+        $following = $this->following ?? [];
+
+        if (!in_array($userId, $following)) {
+            $following[] = $userId;
+            $this->following = $following;
+            $this->save();
+
+            $followedUser = User::find($userId);
+            if ($followedUser) {
+                $followersList = $followedUser->followers ?? [];
+                $followersList[] = $this->id;
+                $followedUser->followers = $followersList;
+                $followedUser->save();
+            }
+
+            return true;
+        }
+        return false;
+    }
+
+    public function unfollow($userId)
+    {
+        $following = $this->following ?? [];
+        if (($key = array_search($userId, $following)) !== false) {
+            unset($following[$key]);
+            $this->following = array_values($following);
+            $this->save();
+
+            $followedUser = User::find($userId);
+            if ($followedUser) {
+                $followersList = $followedUser->followers ?? [];
+                if (($key2 = array_search($this->id, $followersList)) !== false) {
+                    unset($followersList[$key2]);
+                    $followedUser->followers = array_values($followersList);
+                    $followedUser->save();
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
+    public function isFollowing($userId)
+    {
+        return in_array($userId, $this->following ?? []);
+    }
+
+    public function isFollowedBy($userId)
+    {
+        return in_array($userId, $this->followers ?? []);
+    }
+
 }

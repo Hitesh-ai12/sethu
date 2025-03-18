@@ -7,6 +7,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Chat\ChatController;
 use App\Http\Controllers\Post\PostController;
 use App\Http\Controllers\Post\LocationController;
+use App\Http\Controllers\Post\FollowController;
 
 Route::post('/register', [RegisterController::class, 'register'])->name('api.register');
 Route::post('/login', [LoginController::class, 'apilogin']);
@@ -40,6 +41,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/posts', [PostController::class, 'getPosts']);
     Route::get('/locations', [LocationController::class, 'ApigetLocations']);
 
+    Route::post('/follow/{id}', [FollowController::class, 'followUser']);
+    Route::post('/unfollow/{id}', [FollowController::class, 'unfollowUser']);
+    Route::post('/follow-back/{id}', [FollowController::class, 'followBack']);
+    Route::get('/followers', [FollowController::class, 'getFollowers']);
+    Route::get('/following', [FollowController::class, 'getFollowing']);
 });
 
 
