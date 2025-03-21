@@ -74,4 +74,22 @@ class ChatController extends Controller
         return response()->json(['chat' => $chat], 200);
     }
 
+
+    public function getUserChats(Request $request)
+    {
+        $user = $request->user(); // Get the authenticated user
+
+        // Fetch chats where the user is a participant, with the latest message
+        $chats = Chat::whereHas('participants', function ($query) use ($user) {
+            $query->where('user_id', $user->id);
+        })
+        ->with(['latestMessage', 'participants.user:id,name'])
+        ->get();
+
+        return response()->json([
+            'message' => 'Chat list retrieved successfully',
+            'chats' => $chats
+        ], 200);
+    }
+
 }

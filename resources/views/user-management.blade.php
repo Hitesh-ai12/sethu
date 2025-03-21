@@ -109,6 +109,7 @@
             }).then(response => response.json())
               .then(data => {
                   if (data.success) {
+                    
                       Swal.fire({
                           title: "Updated!",
                           text: `User status has been changed to ${newStatus}.`,

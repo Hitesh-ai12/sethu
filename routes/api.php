@@ -28,6 +28,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/create-chat', [ChatController::class, 'createChat']);
     Route::post('/send-message', [ChatController::class, 'sendMessage']);
     Route::get('/chat-messages/{chat_id}', [ChatController::class, 'getChatMessages']);
+    Route::get('/chats', [ChatController::class, 'getUserChats']);
 
     Route::post('/block-user', [RegisterController::class, 'blockUser']);
     Route::post('/unblock-user', [RegisterController::class, 'unblockUser']);

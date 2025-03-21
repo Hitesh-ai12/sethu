@@ -11,26 +11,26 @@ use Illuminate\Support\Facades\Auth;
 
 class PostController extends Controller
 {
-    public function store(Request $request)
-     {
+    public function store(Request $request) {
         $request->validate([
             'content' => 'nullable|string|max:1000',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'youtube_link' => 'nullable|url'
+            'file' => 'nullable|file|mimes:jpeg,png,jpg,gif,pdf,mp4,mov,avi,wmv|max:10240',
+            'youtube_link' => 'nullable|url',
         ]);
 
         $user = auth()->user();
 
-        $imagePath = null;
-        if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('post_images', 'public');
+        $filePath = null;
+
+        if ($request->hasFile('file')) {
+            $filePath = $request->file('file')->store('post_files', 'public');
         }
 
         $post = Post::create([
             'user_id' => $user->id,
             'content' => $request->content,
-            'image' => $imagePath,
-            'youtube_link' => $request->youtube_link
+            'image' => $filePath,
+            'youtube_link' => $request->youtube_link,
         ]);
 
         return response()->json([
@@ -62,5 +62,6 @@ class PostController extends Controller
             'posts' => $posts
         ]);
     }
+
 
 }
