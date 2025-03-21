@@ -80,7 +80,7 @@ class RegisterController extends Controller
         ]);
 
         if ($validator->fails()) {
-            
+
             return response()->json(['message' => $validator->errors()->first()], 422);
         }
 
@@ -212,7 +212,7 @@ class RegisterController extends Controller
             $query->where('subject', 'LIKE', '%' . $request->subject . '%');
         }
 
-        $teachers = $query->get(['id', 'name', 'email', 'subject', 'city', 'profile_image', 'description', 'school_college_name', 'full_address']);
+        $teachers = $query->get(['id', 'name', 'email', 'subject', 'city', 'profile_image', 'description', 'school_college_name', 'full_address','status']);
 
         return response()->json([
             'success' => true,
@@ -224,7 +224,7 @@ class RegisterController extends Controller
     public function getTeacherById($id)
     {
         $teacher = User::where('role', 'teacher')->where('id', $id)
-            ->first(['id', 'name', 'email', 'subject', 'city', 'profile_image', 'description', 'school_college_name']);
+            ->first(['id', 'name', 'email', 'subject', 'city', 'profile_image', 'description', 'school_college_name','status']);
 
         if (!$teacher) {
             return response()->json(['message' => 'Teacher not found'], 404);
