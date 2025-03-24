@@ -24,4 +24,14 @@ class PostInteraction extends Model
     public function user() {
         return $this->belongsTo(User::class);
     }
+    public function replies()
+    {
+        return $this->hasMany(CommentReply::class, 'comment_id');
+    }
+
+    public function likes()
+    {
+        return $this->hasMany(PostInteraction::class, 'parent_id')
+            ->where('action', 'like');
+    }
 }

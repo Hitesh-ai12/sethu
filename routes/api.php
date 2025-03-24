@@ -10,6 +10,8 @@ use App\Http\Controllers\Post\LocationController;
 use App\Http\Controllers\Post\FollowController;
 use App\Http\Controllers\Library\ResourceLibraryController;
 use App\Http\Controllers\Post\PostInteractionController;
+use App\Http\Controllers\Post\CommentLikeController;
+use App\Http\Controllers\Post\CommentReplyController;
 
 Route::post('/register', [RegisterController::class, 'register'])->name('api.register');
 Route::post('/login', [LoginController::class, 'apilogin']);
@@ -53,6 +55,21 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/unique-subjects', [ResourceLibraryController::class, 'getUniqueSubjects']);
     Route::post('/post/{post}/interact', [PostInteractionController::class, 'store']);
     Route::get('/post/{post}/interactions', [PostInteractionController::class, 'index']);
+    Route::post('/post/{post}/share' , [PostInteractionController::class, 'share']);
+    Route::get('/post/{post}/share-count' , [PostInteractionController::class, 'getShareCount']);
+
+    Route::post('/post/{post}/comments', [PostInteractionController::class, 'addComment']); // Add Comment
+    Route::get('/post/{post}/comments', [PostInteractionController::class, 'fetchComments']); // Fetch All Comments
+    Route::put('/post/{post}/comments/{comment}', [PostInteractionController::class, 'updateComment']); // Update Comment
+    Route::delete('/post/{post}/comments/{comment}', [PostInteractionController::class, 'deleteComment']); // Delete Comment
+
+    // Likes on Comments
+    Route::post('/comments/{comment}/like', [CommentLikeController::class, 'toggleLike']); // Like or Unlike a Comment
+
+    // Replies on Comments
+    Route::post('/comments/{comment}/replies', [CommentReplyController::class, 'addReply']); // Add Reply
+    Route::get('/comments/{comment}/replies', [CommentReplyController::class, 'fetchReplies']); // Fetch Replies
+    Route::delete('/replies/{reply}', [CommentReplyController::class, 'deleteReply']); // Delete Reply
 });
 
 
