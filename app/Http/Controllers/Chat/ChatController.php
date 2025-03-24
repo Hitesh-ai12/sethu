@@ -23,10 +23,8 @@ class ChatController extends Controller
             return response()->json(['message' => $validator->errors()->first()], 422);
         }
 
-        // Sort user IDs to ensure consistency when comparing participant lists
         $userIds = collect($request->user_ids)->sort()->values()->all();
 
-        // Check if a chat already exists with the same participants
         $existingChat = Chat::whereHas('participants', function ($query) use ($userIds) {
             $query->whereIn('user_id', $userIds);
         })
@@ -40,7 +38,6 @@ class ChatController extends Controller
             return response()->json(['message' => 'Chat already exists!', 'chat_id' => $existingChat->id], 200);
         }
 
-        // Create a new chat
         $chat = Chat::create();
 
         foreach ($userIds as $user_id) {
