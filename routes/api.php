@@ -9,7 +9,7 @@ use App\Http\Controllers\Post\PostController;
 use App\Http\Controllers\Post\LocationController;
 use App\Http\Controllers\Post\FollowController;
 use App\Http\Controllers\Library\ResourceLibraryController;
-use App\Http\Controllers\PostInteractionController;
+use App\Http\Controllers\Post\PostInteractionController;
 
 Route::post('/register', [RegisterController::class, 'register'])->name('api.register');
 Route::post('/login', [LoginController::class, 'apilogin']);
@@ -51,7 +51,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/following', [FollowController::class, 'getFollowing']);
 
     Route::get('/unique-subjects', [ResourceLibraryController::class, 'getUniqueSubjects']);
-
+    Route::post('/post/{post}/interact', [PostInteractionController::class, 'store']);
+    Route::get('/post/{post}/interactions', [PostInteractionController::class, 'index']);
 });
 
 
