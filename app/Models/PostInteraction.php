@@ -9,12 +9,8 @@ class PostInteraction extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'post_id',
-        'user_id',
-        'action',
-        'content',
-    ];
+    protected $fillable = ['post_id', 'user_id', 'action', 'content', 'parent_id'];
+
 
     // Relationships
     public function post() {
@@ -33,5 +29,14 @@ class PostInteraction extends Model
     {
         return $this->hasMany(PostInteraction::class, 'parent_id')
             ->where('action', 'like');
+    }
+
+    public function parent()
+    {
+        return $this->belongsTo(PostInteraction::class, 'parent_id');
+    }
+    public function children()
+    {
+        return $this->hasMany(PostInteraction::class, 'parent_id');
     }
 }
