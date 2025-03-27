@@ -58,7 +58,7 @@ class CommentActionController extends Controller
     {
         $replies = CommentInteraction::where('comment_id', $commentId)
             ->where('action', 'reply')
-            ->with('user:id,name') // Include user details
+            ->with('user:id,name')
             ->get();
 
         return response()->json(['message' => 'Replies fetched successfully.', 'data' => $replies], 200);

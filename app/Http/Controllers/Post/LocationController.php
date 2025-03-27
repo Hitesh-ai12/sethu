@@ -14,6 +14,7 @@ class LocationController extends Controller
         $locations = Location::orderBy('id', 'desc')->get();
         return response()->json(['success' => true, 'locations' => $locations]);
     }
+
     public function ApigetLocations()
     {
         if (!Auth::check()) {
@@ -32,6 +33,7 @@ class LocationController extends Controller
             'locations' => $locations
         ], 200);
     }
+
     public function addLocation(Request $request)
     {
         $request->validate(['name' => 'required|string|max:255']);

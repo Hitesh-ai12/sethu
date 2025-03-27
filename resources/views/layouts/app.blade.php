@@ -30,7 +30,7 @@
                 <li class="py-2"><a href="{{ route('notifications') }}" class="text-gray-700">Notifications</a></li>
                 <li class="py-2"><a href="{{ route('settings') }}" class="text-gray-700">Settings</a></li>
                 <li class="py-2"><a href="{{ route('location') }}" class="text-gray-700">Location</a></li>
-
+                <li class="py-2"><a href="{{ route('subjects') }}" class="text-gray-700">Subject</a></li>
             </ul>
         </aside>
 

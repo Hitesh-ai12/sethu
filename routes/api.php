@@ -12,6 +12,7 @@ use App\Http\Controllers\Library\ResourceLibraryController;
 use App\Http\Controllers\Post\PostInteractionController;
 
 use App\Http\Controllers\Post\CommentActionController;
+use App\Http\Controllers\SubjectController;
 
 Route::post('/register', [RegisterController::class, 'register'])->name('api.register');
 Route::post('/login', [LoginController::class, 'apilogin']);
@@ -67,6 +68,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/comments/{commentId}/reply', [CommentActionController::class, 'reply']);
     Route::get('/comments/{commentId}/replies', [CommentActionController::class, 'fetchReplies']);
 
+    Route::get('/subjects', [SubjectController::class, 'fetchSubjects'])->name('api.fetch.subjects');
 
 });
 

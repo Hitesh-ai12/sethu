@@ -26,3 +26,4 @@ class CommentInteraction extends Model
         return $this->belongsTo(PostInteraction::class, 'comment_id');
     }
 }
+
