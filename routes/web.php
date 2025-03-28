@@ -7,6 +7,7 @@ use App\Http\Controllers\Post\LocationController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\SubjectController;
+use App\Http\Controllers\EventController;
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', fn() => view('dashboard'))->name('dashboard');
@@ -35,6 +36,13 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/add-subject', [SubjectController::class, 'addSubject'])->name('add.subject');
     Route::put('/update-subject/{id}', [SubjectController::class, 'updateSubject']);
     Route::delete('/delete-subject/{id}', [SubjectController::class, 'deleteSubject']);
+
+    Route::get('/events', [EventController::class, 'index'])->name('events.index');
+
+    Route::post('/events', [EventController::class, 'store'])->name('events.store');
+
+    Route::delete('/events/{id}', [EventController::class, 'destroy'])->name('events.destroy');
+
 });
 
 

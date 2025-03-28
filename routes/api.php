@@ -13,6 +13,7 @@ use App\Http\Controllers\Post\PostInteractionController;
 
 use App\Http\Controllers\Post\CommentActionController;
 use App\Http\Controllers\SubjectController;
+use App\Http\Controllers\EventController;
 
 Route::post('/register', [RegisterController::class, 'register'])->name('api.register');
 Route::post('/login', [LoginController::class, 'apilogin']);
@@ -69,6 +70,16 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/comments/{commentId}/replies', [CommentActionController::class, 'fetchReplies']);
 
     Route::get('/subjects', [SubjectController::class, 'fetchSubjects'])->name('api.fetch.subjects');
+
+    // API: Get All Events
+    Route::get('/events', [EventController::class, 'getEvents']);
+
+    // API: Store Event
+    Route::post('/events', [EventController::class, 'storeEventApi']);
+
+    // API: Delete Event
+    Route::delete('/events/{id}', [EventController::class, 'deleteEventApi']);
+
 
 });
 

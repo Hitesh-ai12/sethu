@@ -31,6 +31,7 @@
                 <li class="py-2"><a href="{{ route('settings') }}" class="text-gray-700">Settings</a></li>
                 <li class="py-2"><a href="{{ route('location') }}" class="text-gray-700">Location</a></li>
                 <li class="py-2"><a href="{{ route('subjects') }}" class="text-gray-700">Subject</a></li>
+                <li class="py-2"><a href="{{ route('events.index') }}" class="text-gray-700">Event & Webinars</a></li>
             </ul>
         </aside>
 

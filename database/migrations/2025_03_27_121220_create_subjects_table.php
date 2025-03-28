@@ -1,22 +1,22 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
+    use Illuminate\Database\Migrations\Migration;
+    use Illuminate\Database\Schema\Blueprint;
+    use Illuminate\Support\Facades\Schema;
 
-class CreateSubjectsTable extends Migration
-{
-    public function up()
+    class CreateSubjectsTable extends Migration
     {
-        Schema::create('subjects', function (Blueprint $table) {
-            $table->id();
-            $table->string('name')->unique();
-            $table->timestamps();
-        });
-    }
+        public function up()
+        {
+            Schema::create('subjects', function (Blueprint $table) {
+                $table->id();
+                $table->string('name')->unique();
+                $table->timestamps();
+            });
+        }
 
-    public function down()
-    {
-        Schema::dropIfExists('subjects');
+        public function down()
+        {
+            Schema::dropIfExists('subjects');
+        }
     }
-}
