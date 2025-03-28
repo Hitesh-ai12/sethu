@@ -80,6 +80,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // API: Delete Event
     Route::delete('/events/{id}', [EventController::class, 'deleteEventApi']);
 
+    Route::get('/events/{id}', [EventController::class, 'getEventById']);
 
 });
 

@@ -104,5 +104,21 @@ public function getEvents()
         'data' => $events,
     ], 200);
 }
+// ✅ Get Event by ID (API)
+public function getEventById($id)
+{
+    // Find the event by ID
+    $event = Event::find($id);
+
+    // Check if the event exists
+    if (!$event) {
+        return response()->json(['error' => 'Event not found'], 404);
+    }
+
+    // Return the event details
+    return response()->json([
+        'data' => $event,
+    ], 200);
+}
 
 }
