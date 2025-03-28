@@ -32,37 +32,44 @@
     </form>
 
     <!-- Events List -->
-    <table class="table-auto w-full border-collapse border border-gray-300">
-        <thead>
-            <tr class="bg-gray-200">
-                <th class="border px-4 py-2">Image</th>
-                <th class="border px-4 py-2">Link</th>
-                <th class="border px-4 py-2">Actions</th>
+<!-- Events List -->
+<table class="table-auto w-full border-collapse border border-gray-300">
+    <thead>
+        <tr class="bg-gray-200">
+            <th class="border px-4 py-2">Image</th>
+            <th class="border px-4 py-2">Link</th>
+            <th class="border px-4 py-2">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @forelse ($events as $event)
+            <tr>
+                <td class="border px-4 py-2">
+                    <img src="{{ asset('storage/' . $event->image) }}" alt="Event Image" class="h-16 w-16">
+                </td>
+                <td class="border px-4 py-2">
+                    <a href="{{ $event->link }}" target="_blank" class="text-blue-500">{{ $event->link }}</a>
+                </td>
+                <td class="border px-4 py-2">
+                    <form action="{{ route('events.destroy', $event->id) }}" method="POST">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="bg-red-500 text-white px-3 py-1 rounded">Delete</button>
+                    </form>
+                </td>
             </tr>
-        </thead>
-        <tbody>
-            @forelse ($events as $event)
-                <tr>
-                    <td class="border px-4 py-2">
-                        <img src="{{ asset('storage/' . $event->image) }}" alt="Event Image" class="h-16 w-16">
-                    </td>
-                    <td class="border px-4 py-2">
-                        <a href="{{ $event->link }}" target="_blank" class="text-blue-500">{{ $event->link }}</a>
-                    </td>
-                    <td class="border px-4 py-2">
-                        <form action="{{ route('events.destroy', $event->id) }}" method="POST">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="bg-red-500 text-white px-3 py-1 rounded">Delete</button>
-                        </form>
-                    </td>
-                </tr>
-            @empty
-                <tr>
-                    <td colspan="3" class="text-center border px-4 py-2">No events found.</td>
-                </tr>
-            @endforelse
-        </tbody>
-    </table>
+        @empty
+            <tr>
+                <td colspan="3" class="text-center border px-4 py-2">No events found.</td>
+            </tr>
+        @endforelse
+    </tbody>
+</table>
+
+<!-- Pagination Links -->
+<div class="mt-4">
+    {{ $events->links() }}
+</div>
+
 </div>
 @endsection

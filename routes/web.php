@@ -42,7 +42,6 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/events', [EventController::class, 'store'])->name('events.store');
 
     Route::delete('/events/{id}', [EventController::class, 'destroy'])->name('events.destroy');
-
 });
 
 
