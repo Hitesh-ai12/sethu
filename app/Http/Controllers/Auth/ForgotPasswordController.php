@@ -95,9 +95,11 @@ class ForgotPasswordController extends Controller
         ], 200);
     }
 
+
     public function resetPassword(Request $request)
     {
         $validator = Validator::make($request->all(), [
+            'email_or_phone' => 'required',
             'password' => 'required|string|min:8|confirmed'
         ]);
 
@@ -105,10 +107,13 @@ class ForgotPasswordController extends Controller
             return response()->json(['message' => $validator->errors()->first()], 422);
         }
 
-        $user = auth()->user();
+        // Find the user by email or phone
+        $user = User::where('email', $request->email_or_phone)
+                    ->orWhere('mobile_number', $request->email_or_phone)
+                    ->first();
 
         if (!$user) {
-            return response()->json(['message' => 'Unauthorized or session expired'], 401);
+            return response()->json(['message' => 'User not found'], 404);
         }
 
         $user->password = Hash::make($request->password);
@@ -116,4 +121,26 @@ class ForgotPasswordController extends Controller
 
         return response()->json(['message' => 'Password reset successfully'], 200);
     }
+
+    // public function resetPassword(Request $request)
+    // {
+    //     $validator = Validator::make($request->all(), [
+    //         'password' => 'required|string|min:8|confirmed'
+    //     ]);
+
+    //     if ($validator->fails()) {
+    //         return response()->json(['message' => $validator->errors()->first()], 422);
+    //     }
+
+    //     $user = auth()->user();
+
+    //     if (!$user) {
+    //         return response()->json(['message' => 'Unauthorized or session expired'], 401);
+    //     }
+
+    //     $user->password = Hash::make($request->password);
+    //     $user->save();
+
+    //     return response()->json(['message' => 'Password reset successfully'], 200);
+    // }
 }

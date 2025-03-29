@@ -31,7 +31,6 @@
         <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Add Event</button>
     </form>
 
-    <!-- Events List -->
 <!-- Events List -->
 <table class="table-auto w-full border-collapse border border-gray-300">
     <thead>
