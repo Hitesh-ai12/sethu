@@ -14,6 +14,8 @@ use App\Http\Controllers\Post\PostInteractionController;
 use App\Http\Controllers\Post\CommentActionController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\Job\JobPostInteractionController;
+
 
 Route::post('/register', [RegisterController::class, 'register'])->name('api.register');
 Route::post('/login', [LoginController::class, 'apilogin']);
@@ -69,6 +71,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/comments/{commentId}/reply', [CommentActionController::class, 'reply']);
     Route::get('/comments/{commentId}/replies', [CommentActionController::class, 'fetchReplies']);
 
+    Route::get('/recently-shared', [PostInteractionController::class, 'recentlyShared']);
+
     Route::get('/subjects', [SubjectController::class, 'fetchSubjects'])->name('api.fetch.subjects');
 
     // API: Get All Events
@@ -81,6 +85,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/events/{id}', [EventController::class, 'deleteEventApi']);
 
     Route::get('/events/{id}', [EventController::class, 'getEventById']);
+
+    Route::post('/job-posts/{jobId}/interact', [JobPostInteractionController::class, 'store']);
+    Route::get('/job-posts/{jobId}/comments', [JobPostInteractionController::class, 'fetchComments']);
+    Route::delete('/job-posts/{jobId}/comments/{commentId}', [JobPostInteractionController::class, 'deleteComment']);
+    Route::put('/job-posts/{jobId}/comments/{commentId}', [JobPostInteractionController::class, 'updateComment']);
 
 });
 

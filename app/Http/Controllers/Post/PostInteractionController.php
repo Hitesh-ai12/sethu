@@ -106,7 +106,7 @@ class PostInteractionController extends Controller
                 'post_id' => $postId,
                 'user_id' => $userId,
                 'action' => 'share',
-                'content' => null, // No content needed for sharing
+                'content' => null,
             ]);
 
             return response()->json([
@@ -156,8 +156,8 @@ class PostInteractionController extends Controller
     {
         $comments = PostInteraction::where('post_id', $postId)
             ->where('action', 'comment')
-            ->with('user:id,name') // Include user data
-            ->latest() // Order by most recent comments
+            ->with('user:id,name')
+            ->latest()
             ->get();
 
         return response()->json([
@@ -222,4 +222,23 @@ class PostInteractionController extends Controller
             'data' => $comment,
         ], 200);
     }
+
+    // Fetch Recently Shared Posts by the Logged-In User
+    public function recentlyShared(Request $request)
+    {
+        $userId = auth()->id();
+
+        $recentShares = PostInteraction::where('user_id', $userId)
+            ->where('action', 'share')
+            ->with('post')
+            ->orderBy('created_at', 'desc')
+            ->take(10)
+            ->get();
+
+        return response()->json([
+            'message' => 'Recently shared posts fetched successfully.',
+            'data' => $recentShares,
+        ], 200);
+    }
+
 }
