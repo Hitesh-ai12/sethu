@@ -123,4 +123,17 @@ class JobPostInteractionController extends Controller
             'data' => $comment,
         ], 200);
     }
+
+    public function getLikeCount($postId)
+        {
+            $likeCount = JobPostInteraction::where('job_post_id', $postId)
+                ->where('action', 'like')
+                ->count();
+
+            return response()->json([
+                'post_id' => $postId,
+                'like_count' => $likeCount,
+            ]);
+        }
+
 }

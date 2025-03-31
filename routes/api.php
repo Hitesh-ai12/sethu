@@ -90,6 +90,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/job-posts/{jobId}/comments', [JobPostInteractionController::class, 'fetchComments']);
     Route::delete('/job-posts/{jobId}/comments/{commentId}', [JobPostInteractionController::class, 'deleteComment']);
     Route::put('/job-posts/{jobId}/comments/{commentId}', [JobPostInteractionController::class, 'updateComment']);
+    Route::get('/job-post/{postId}/like-count', [JobPostInteractionController::class, 'getLikeCount']);
 
 });
 
