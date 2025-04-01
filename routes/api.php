@@ -15,7 +15,7 @@ use App\Http\Controllers\Post\CommentActionController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\Job\JobPostInteractionController;
-
+use App\Http\Controllers\BannerController;
 
 Route::post('/register', [RegisterController::class, 'register'])->name('api.register');
 Route::post('/login', [LoginController::class, 'apilogin']);
@@ -91,6 +91,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/job-posts/{jobId}/comments/{commentId}', [JobPostInteractionController::class, 'deleteComment']);
     Route::put('/job-posts/{jobId}/comments/{commentId}', [JobPostInteractionController::class, 'updateComment']);
     Route::get('/job-post/{postId}/like-count', [JobPostInteractionController::class, 'getLikeCount']);
+
+    Route::post('/banners', [BannerController::class, 'store']); // Upload multiple images
+    Route::get('/banners', [BannerController::class, 'index']); // Get all banners
+    Route::delete('/banners/{id}', [BannerController::class, 'destroy']); // Delete a banner
+    Route::get('/banners/user/{userId}', [BannerController::class, 'getBannersByUserId']);
 
 });
 
