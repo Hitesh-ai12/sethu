@@ -196,6 +196,29 @@ class RegisterController extends Controller
     }
 
 
+    // public function fetchTeachers(Request $request)
+    // {
+    //     if (!$request->user()) {
+    //         return response()->json(['message' => 'Unauthorized'], 401);
+    //     }
+
+    //     $request->validate([
+    //         'subject' => 'nullable|string|max:255'
+    //     ]);
+
+    //     $query = User::where('role', 'teacher');
+
+    //     if ($request->has('subject') && !empty($request->subject)) {
+    //         $query->where('subject', 'LIKE', '%' . $request->subject . '%');
+    //     }
+
+    //     $teachers = $query->get(['id', 'name', 'email', 'subject', 'city', 'profile_image', 'description', 'school_college_name', 'full_address','status']);
+
+    //     return response()->json([
+    //         'success' => true,
+    //         'teachers' => $teachers
+    //     ]);
+    // }
     public function fetchTeachers(Request $request)
     {
         if (!$request->user()) {
@@ -206,13 +229,13 @@ class RegisterController extends Controller
             'subject' => 'nullable|string|max:255'
         ]);
 
-        $query = User::where('role', 'teacher');
+        $query = User::where('role', 'teacher')->with('banners');
 
         if ($request->has('subject') && !empty($request->subject)) {
             $query->where('subject', 'LIKE', '%' . $request->subject . '%');
         }
 
-        $teachers = $query->get(['id', 'name', 'email', 'subject', 'city', 'profile_image', 'description', 'school_college_name', 'full_address','status']);
+        $teachers = $query->get(['id', 'name', 'email', 'subject', 'city', 'profile_image', 'description', 'school_college_name', 'full_address', 'status']);
 
         return response()->json([
             'success' => true,

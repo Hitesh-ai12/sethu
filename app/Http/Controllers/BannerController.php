@@ -62,19 +62,19 @@ class BannerController extends Controller
         return response()->json(['message' => 'Banner deleted successfully'], 200);
     }
 
-    // Fetch banners by user ID
-public function getBannersByUserId($userId)
-{
-    $banners = Banner::where('user_id', $userId)->get();
+        // Fetch banners by user ID
+        public function getBannersByUserId($userId)
+        {
+            $banners = Banner::where('user_id', $userId)->get();
 
-    if ($banners->isEmpty()) {
-        return response()->json(['message' => 'No banners found for this user'], 404);
-    }
+            if ($banners->isEmpty()) {
+                return response()->json(['message' => 'No banners found for this user'], 404);
+            }
 
-    return response()->json([
-        'message' => 'Banners retrieved successfully',
-        'data' => $banners,
-    ], 200);
-}
+            return response()->json([
+                'message' => 'Banners retrieved successfully',
+                'data' => $banners,
+            ], 200);
+        }
 
 }

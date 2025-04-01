@@ -104,5 +104,9 @@ class User extends Authenticatable
     {
         return in_array($userId, $this->followers ?? []);
     }
+    public function banners()
+    {
+        return $this->hasMany(Banner::class, 'user_id');
+    }
 
 }
