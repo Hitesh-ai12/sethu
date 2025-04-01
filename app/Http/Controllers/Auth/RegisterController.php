@@ -219,9 +219,12 @@ class RegisterController extends Controller
     //         'teachers' => $teachers
     //     ]);
     // }
+
     public function fetchTeachers(Request $request)
     {
-        if (!$request->user()) {
+        $user = $request->user();
+
+        if (!$user) {
             return response()->json(['message' => 'Unauthorized'], 401);
         }
 
@@ -229,13 +232,21 @@ class RegisterController extends Controller
             'subject' => 'nullable|string|max:255'
         ]);
 
-        $query = User::where('role', 'teacher')->with('banners');
+        // Get blocked users list from logged-in user
+        $blockedUsers = $user->blocked_users ?? [];
+
+        $query = User::where('role', 'teacher')
+                    ->whereNotIn('id', $blockedUsers) // Exclude blocked users
+                    ->with('banners'); // Fetch banners along with teacher data
 
         if ($request->has('subject') && !empty($request->subject)) {
             $query->where('subject', 'LIKE', '%' . $request->subject . '%');
         }
 
-        $teachers = $query->get(['id', 'name', 'email', 'subject', 'city', 'profile_image', 'description', 'school_college_name', 'full_address', 'status']);
+        $teachers = $query->get([
+            'id', 'name', 'email', 'subject', 'city', 'profile_image',
+            'description', 'school_college_name', 'full_address', 'status'
+        ]);
 
         return response()->json([
             'success' => true,
